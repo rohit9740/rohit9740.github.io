@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rohit Vijay Darda — Portfolio</title>
+  <style>
+    :root {
+      --green-dark: #1a3a2a;
+      --green-mid: #2d6a4f;
+      --green-light: #52b788;
+      --green-pale: #b7e4c7;
+      --cream: #f8f5f0;
+      --charcoal: #1c1c1c;
+      --grey: #6b7280;
+      --white: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: var(--cream);
+      color: var(--charcoal);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 999;
+      background: rgba(26, 58, 42, 0.95);
+      backdrop-filter: blur(12px);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 3rem;
+      border-bottom: 1px solid rgba(82, 183, 136, 0.2);
+    }
+    .nav-logo {
+      font-size: 1.1rem; color: var(--green-pale); letter-spacing: 2px;
+      font-family: 'Arial', sans-serif; font-weight: 300;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.7); text-decoration: none;
+      font-family: 'Arial', sans-serif; font-size: 0.85rem; letter-spacing: 1px;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--green-light); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--green-dark) 0%, #0d2318 50%, #1a2f1a 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      padding-top: 80px;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(82,183,136,0.08) 0%, transparent 60%);
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      max-width: 1100px; width: 100%; padding: 0 3rem; gap: 4rem;
+      align-items: center; position: relative;
+    }
+    .hero-text { animation: fadeInUp 0.8s ease both; }
+    .hero-label {
+      font-family: 'Arial', sans-serif; font-size: 0.75rem;
+      letter-spacing: 4px; color: var(--green-light);
+      text-transform: uppercase; margin-bottom: 1.2rem;
+    }
+    .hero-name {
+      font-size: clamp(2.8rem, 5vw, 4.5rem); color: var(--white);
+      line-height: 1.1; margin-bottom: 1.2rem; font-weight: normal;
+    }
+    .hero-name span { color: var(--green-light); }
+    .hero-tagline {
+      font-size: 1.1rem; color: rgba(255,255,255,0.6);
+      line-height: 1.7; margin-bottom: 2rem;
+      font-style: italic;
+    }
+    .hero-quote {
+      font-size: 0.95rem; color: var(--green-pale);
+      border-left: 2px solid var(--green-light);
+      padding-left: 1rem; line-height: 1.6;
+      font-style: italic;
+    }
+    .hero-cta {
+      display: flex; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-block; padding: 0.8rem 2rem;
+      font-family: 'Arial', sans-serif; font-size: 0.85rem;
+      letter-spacing: 1px; text-decoration: none;
+      border-radius: 2px; transition: all 0.3s; cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--green-light); color: var(--green-dark);
+      font-weight: 700;
+    }
+    .btn-primary:hover { background: var(--green-pale); transform: translateY(-2px); }
+    .btn-outline {
+      border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.8);
+    }
+    .btn-outline:hover { border-color: var(--green-light); color: var(--green-light); }
+
+    .hero-visual {
+      display: flex; flex-direction: column; align-items: center; gap: 2rem;
+      animation: fadeInRight 0.8s ease 0.2s both;
+    }
+    .hero-photo-frame {
+      width: 280px; height: 280px; border-radius: 50%;
+      border: 3px solid var(--green-light);
+      background: linear-gradient(135deg, var(--green-mid), var(--green-dark));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 6rem; box-shadow: 0 0 60px rgba(82,183,136,0.2);
+      overflow: hidden; position: relative;
+    }
+    .hero-photo-frame img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .hero-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+      width: 100%;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(82,183,136,0.2);
+      border-radius: 8px; padding: 1.2rem; text-align: center;
+    }
+    .stat-number { font-size: 1.6rem; color: var(--green-light); font-weight: bold; }
+    .stat-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); font-family: 'Arial', sans-serif; letter-spacing: 1px; margin-top: 0.3rem; }
+
+    /* ── SECTIONS ── */
+    section { padding: 6rem 3rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-family: 'Arial', sans-serif; font-size: 0.75rem;
+      letter-spacing: 4px; color: var(--green-mid);
+      text-transform: uppercase; margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-size: clamp(2rem, 3vw, 2.8rem); color: var(--green-dark);
+      margin-bottom: 3rem; font-weight: normal;
+    }
+    .section-title span { color: var(--green-mid); }
+
+    /* ── ABOUT ── */
+    .about { background: var(--white); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .about-text p {
+      font-size: 1.05rem; line-height: 1.85; color: #374151; margin-bottom: 1.5rem;
+    }
+    .about-text .highlight { color: var(--green-mid); font-style: italic; }
+    .about-facts { display: flex; flex-direction: column; gap: 1.2rem; }
+    .fact-item {
+      display: flex; gap: 1rem; align-items: flex-start;
+      padding: 1.2rem; background: var(--cream); border-radius: 8px;
+      border-left: 3px solid var(--green-light);
+    }
+    .fact-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .fact-label { font-family: 'Arial', sans-serif; font-size: 0.75rem; color: var(--grey); letter-spacing: 1px; text-transform: uppercase; }
+    .fact-value { font-size: 0.95rem; color: var(--charcoal); margin-top: 0.2rem; }
+
+    /* ── EXPERIENCE ── */
+    .experience { background: var(--cream); }
+    .timeline { position: relative; }
+    .timeline::before {
+      content: ''; position: absolute; left: 20px; top: 0; bottom: 0;
+      width: 2px; background: linear-gradient(to bottom, var(--green-light), transparent);
+    }
+    .timeline-item {
+      display: flex; gap: 2.5rem; margin-bottom: 3rem;
+      padding-left: 3.5rem; position: relative;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .timeline-item.visible { opacity: 1; transform: translateY(0); }
+    .timeline-dot {
+      position: absolute; left: 12px; top: 6px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--green-light); border: 3px solid var(--cream);
+      flex-shrink: 0;
+    }
+    .timeline-dot.accent { background: var(--green-mid); }
+    .timeline-content {
+      background: var(--white); border-radius: 12px; padding: 1.8rem 2rem;
+      flex: 1; border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .timeline-content:hover {
+      transform: translateX(4px); box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .timeline-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
+    .timeline-role { font-size: 1.05rem; font-weight: bold; color: var(--green-dark); }
+    .timeline-company { color: var(--green-mid); font-size: 0.9rem; margin-bottom: 0.3rem; }
+    .timeline-period {
+      font-family: 'Arial', sans-serif; font-size: 0.75rem;
+      background: var(--green-pale); color: var(--green-dark);
+      padding: 0.2rem 0.8rem; border-radius: 20px; white-space: nowrap;
+    }
+    .timeline-bullets { list-style: none; margin-top: 0.8rem; }
+    .timeline-bullets li {
+      font-size: 0.9rem; color: #4b5563; line-height: 1.6;
+      padding: 0.3rem 0; padding-left: 1.2rem; position: relative;
+    }
+    .timeline-bullets li::before {
+      content: '→'; position: absolute; left: 0; color: var(--green-light);
+      font-size: 0.8rem;
+    }
+
+    /* ── SKILLS ── */
+    .skills { background: var(--green-dark); }
+    .skills .section-title { color: var(--white); }
+    .skills .section-label { color: var(--green-light); }
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+    .skill-category { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 2rem; border: 1px solid rgba(82,183,136,0.2); }
+    .skill-cat-title { font-family: 'Arial', sans-serif; font-size: 0.8rem; letter-spacing: 2px; color: var(--green-light); text-transform: uppercase; margin-bottom: 1.5rem; }
+    .skill-item { margin-bottom: 1.2rem; }
+    .skill-name { font-family: 'Arial', sans-serif; font-size: 0.85rem; color: rgba(255,255,255,0.8); display: flex; justify-content: space-between; margin-bottom: 0.4rem; }
+    .skill-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+    .skill-fill { height: 100%; background: linear-gradient(to right, var(--green-light), var(--green-pale)); border-radius: 2px; width: 0; transition: width 1.2s ease; }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.8rem; }
+    .tag {
+      font-family: 'Arial', sans-serif; font-size: 0.75rem;
+      background: rgba(82,183,136,0.15); color: var(--green-pale);
+      border: 1px solid rgba(82,183,136,0.3); border-radius: 4px;
+      padding: 0.3rem 0.8rem; letter-spacing: 0.5px;
+    }
+
+    /* ── EDUCATION ── */
+    .education { background: var(--white); }
+    .edu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .edu-card {
+      border: 1px solid rgba(0,0,0,0.08); border-radius: 12px; padding: 2rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+      border-top: 4px solid var(--green-light);
+    }
+    .edu-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+    .edu-degree { font-size: 1rem; font-weight: bold; color: var(--green-dark); margin-bottom: 0.5rem; }
+    .edu-school { color: var(--green-mid); font-size: 0.9rem; margin-bottom: 0.4rem; }
+    .edu-year { font-family: 'Arial', sans-serif; font-size: 0.75rem; color: var(--grey); }
+
+    /* ── VOLUNTEERING ── */
+    .volunteering { background: var(--cream); }
+    .vol-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+    .vol-card {
+      background: var(--white); border-radius: 12px; padding: 1.8rem;
+      border: 1px solid rgba(0,0,0,0.06);
+      display: flex; flex-direction: column; gap: 0.8rem;
+    }
+    .vol-icon { font-size: 2rem; }
+    .vol-title { font-size: 1rem; font-weight: bold; color: var(--green-dark); }
+    .vol-org { font-size: 0.85rem; color: var(--green-mid); }
+    .vol-desc { font-size: 0.88rem; color: var(--grey); line-height: 1.6; }
+
+    /* ── LANGUAGES ── */
+    .languages-row { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; }
+    .lang-pill {
+      display: flex; align-items: center; gap: 0.8rem;
+      background: var(--white); border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 50px; padding: 0.8rem 1.5rem;
+    }
+    .lang-name { font-size: 0.95rem; font-weight: bold; color: var(--green-dark); }
+    .lang-level { font-size: 0.78rem; color: var(--grey); font-family: 'Arial', sans-serif; }
+
+    /* ── CONTACT ── */
+    .contact {
+      background: linear-gradient(135deg, var(--green-dark) 0%, #0d2318 100%);
+      text-align: center;
+    }
+    .contact .section-title { color: var(--white); }
+    .contact .section-label { color: var(--green-light); }
+    .contact-subtitle { font-size: 1.05rem; color: rgba(255,255,255,0.6); margin-bottom: 3rem; max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+    .contact-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+    .contact-link {
+      display: flex; align-items: center; gap: 0.8rem;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(82,183,136,0.3);
+      border-radius: 8px; padding: 1.2rem 2rem;
+      color: rgba(255,255,255,0.85); text-decoration: none;
+      font-family: 'Arial', sans-serif; font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+    .contact-link:hover { background: rgba(82,183,136,0.15); border-color: var(--green-light); color: var(--white); transform: translateY(-2px); }
+    .contact-link-icon { font-size: 1.2rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #0a1a10; text-align: center; padding: 2rem;
+      font-family: 'Arial', sans-serif; font-size: 0.8rem;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 4rem 1.5rem; }
+      .hero-grid { grid-template-columns: 1fr; gap: 2rem; padding: 0 1.5rem; text-align: center; }
+      .hero-visual { order: -1; }
+      .hero-photo-frame { width: 200px; height: 200px; margin: 0 auto; }
+      .hero-stats { grid-template-columns: repeat(3, 1fr); }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .timeline::before { left: 8px; }
+      .timeline-item { padding-left: 2.5rem; }
+      .timeline-dot { left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">RVD</span>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#volunteering">Beyond Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-grid">
+    <div class="hero-text">
+      <p class="hero-label">Sustainable Finance & Data</p>
+      <h1 class="hero-name">Rohit<br/>Vijay <span>Darda</span></h1>
+      <p class="hero-tagline">
+        Master's student at BI Norwegian Business School.<br/>
+        Bridging data, sustainability, and real-world decisions.
+      </p>
+      <p class="hero-quote">
+        "The real challenge is not ambition — it is execution.<br/>
+        And execution depends on data that people can actually use."
+      </p>
+      <div class="hero-cta">
+        <a href="#experience" class="btn btn-primary">View My Work</a>
+        <a href="#contact" class="btn btn-outline">Get in Touch</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-photo-frame">
+        <span style="font-size:5rem">👤</span>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-number">2.5M</div>
+          <div class="stat-label">NOK Managed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">700+</div>
+          <div class="stat-label">Buddies Led</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">3</div>
+          <div class="stat-label">Languages</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="section-inner">
+    <p class="section-label">Who I Am</p>
+    <h2 class="section-title">A bit about <span>me</span></h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          I'm a <span class="highlight">Master's student in Sustainable Finance</span> at BI Norwegian Business School, Oslo —
+          currently writing my thesis on renewable energy and data-driven decision making.
+          I grew up navigating three cultures (Indian, Norwegian, global), which shaped my curiosity
+          and comfort with complexity.
+        </p>
+        <p>
+          What drives me is the gap between sustainability ambition and sustainability execution.
+          I've seen first-hand at Orkla Foods Norge and the Norwegian Refugee Council how the right
+          data structure — clean, trusted, and understood — can change the decisions people make.
+          I want to be the person who builds that bridge.
+        </p>
+        <p>
+          Outside of data and finance, I've organized <span class="highlight">Norway's largest student sustainability conference</span>,
+          cooked and donated meals to charity, babysat children with special needs,
+          and worked as a cashier and chef. I believe in showing up fully — wherever that is.
+        </p>
+      </div>
+      <div class="about-facts">
+        <div class="fact-item">
+          <span class="fact-icon">📍</span>
+          <div>
+            <div class="fact-label">Location</div>
+            <div class="fact-value">Oslo, Norway</div>
+          </div>
+        </div>
+        <div class="fact-item">
+          <span class="fact-icon">🎓</span>
+          <div>
+            <div class="fact-label">Currently</div>
+            <div class="fact-value">MSc Sustainable Finance, BI (2024–2026)</div>
+          </div>
+        </div>
+        <div class="fact-item">
+          <span class="fact-icon">🌱</span>
+          <div>
+            <div class="fact-label">Thesis Focus</div>
+            <div class="fact-value">Renewable Energy & Data-Driven Decision Making</div>
+          </div>
+        </div>
+        <div class="fact-item">
+          <span class="fact-icon">💡</span>
+          <div>
+            <div class="fact-label">What I love</div>
+            <div class="fact-value">Turning messy data into clear, actionable insights</div>
+          </div>
+        </div>
+        <div class="fact-item">
+          <span class="fact-icon">🌍</span>
+          <div>
+            <div class="fact-label">Languages</div>
+            <div class="fact-value">Norwegian · English · Hindi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="experience" id="experience">
+  <div class="section-inner">
+    <p class="section-label">Career Journey</p>
+    <h2 class="section-title">Where I've <span>worked</span></h2>
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role">Data Analyst Intern — Produktutvikling</div>
+              <div class="timeline-company">Orkla Foods Norge AS</div>
+            </div>
+            <span class="timeline-period">Aug – Nov 2025</span>
+          </div>
+          <ul class="timeline-bullets">
+            <li>Built a KPI & project dashboard from scratch in Power BI — from data model to live reporting tool</li>
+            <li>Conducted ESG data analysis (PPWR, Scope 3 emissions) to support sustainability reporting</li>
+            <li>Structured and validated incomplete, inconsistent datasets to make them decision-ready</li>
+            <li>Improved workflow and structure of product decision-making meetings</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role">Global Monitoring & Evaluation Intern</div>
+              <div class="timeline-company">Norwegian Refugee Council (NRC)</div>
+            </div>
+            <span class="timeline-period">Jan – Apr 2024</span>
+          </div>
+          <ul class="timeline-bullets">
+            <li>Cleaned and analysed data from multiple country offices to strengthen global reporting quality</li>
+            <li>Supported the Global M&E Specialist in updating the Better Learning Program (BLP) toolbox</li>
+            <li>Contributed to programs restoring psychosocial well-being for children in conflict-affected areas</li>
+            <li>Took ownership in ambiguous environments with no predefined starting point</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot accent"></div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role">Financial Officer — Winter Games 2022</div>
+              <div class="timeline-company">BISO Oslo (Student Organization)</div>
+            </div>
+            <span class="timeline-period">Oct 2021 – Feb 2022</span>
+          </div>
+          <ul class="timeline-bullets">
+            <li>Oversaw a budget of <strong>2.5 million NOK</strong> for Norway's largest student winter event</li>
+            <li>Managed financial reporting, accounting, and invoices end-to-end</li>
+            <li>Ensured accurate financial records and full budgetary compliance</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot accent"></div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role">VP & Event Coordinator, BBA Board</div>
+              <div class="timeline-company">BISO Oslo (Student Organization)</div>
+            </div>
+            <span class="timeline-period">Sep 2022 – Jun 2023</span>
+          </div>
+          <ul class="timeline-bullets">
+            <li>Organized Norway's largest student sustainability conference (Impact)</li>
+            <li>Coordinated sustainable suppliers, budget management, and stakeholders</li>
+            <li>Managed multiple large-scale events simultaneously across departments</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role">Buddy Administrator — Fadderullan 2022</div>
+              <div class="timeline-company">BISO Oslo</div>
+            </div>
+            <span class="timeline-period">Feb – Aug 2022</span>
+          </div>
+          <ul class="timeline-bullets">
+            <li>Recruited, managed, and supported <strong>700+ student buddies</strong></li>
+            <li>Led a team of ambassadors to ensure smooth event execution</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role">Customer Experience Ambassador</div>
+              <div class="timeline-company">Oslo Business Forum</div>
+            </div>
+            <span class="timeline-period">Aug – Sep 2023</span>
+          </div>
+          <ul class="timeline-bullets">
+            <li>Helped build and run the event under the theme "Thriving in Chaos"</li>
+            <li>Provided top-tier customer service and experience to attendees</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="skills" id="skills">
+  <div class="section-inner">
+    <p class="section-label">Capabilities</p>
+    <h2 class="section-title" style="color:var(--white)">What I <span style="color:var(--green-light)">bring</span></h2>
+    <div class="skills-grid">
+
+      <div class="skill-category">
+        <div class="skill-cat-title">Data & Analytics</div>
+        <div class="skill-item">
+          <div class="skill-name"><span>Power BI</span><span>90%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="90"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name"><span>Microsoft Excel</span><span>95%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="95"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name"><span>Data Cleaning & Structuring</span><span>88%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="88"></div></div>
+        </div>
+      </div>
+
+      <div class="skill-category">
+        <div class="skill-cat-title">Programming</div>
+        <div class="skill-item">
+          <div class="skill-name"><span>R</span><span>80%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="80"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name"><span>Python</span><span>75%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="75"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name"><span>Stata</span><span>72%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="72"></div></div>
+        </div>
+      </div>
+
+      <div class="skill-category">
+        <div class="skill-cat-title">Sustainability & Finance</div>
+        <div class="skill-item">
+          <div class="skill-name"><span>ESG Data Analysis</span><span>85%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="85"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name"><span>Sustainability Reporting</span><span>82%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="82"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name"><span>Scope 3 / PPWR Analysis</span><span>78%</span></div>
+          <div class="skill-bar"><div class="skill-fill" data-width="78"></div></div>
+        </div>
+      </div>
+
+      <div class="skill-category">
+        <div class="skill-cat-title">Soft Skills & Leadership</div>
+        <div class="skill-tags">
+          <span class="tag">Stakeholder Communication</span>
+          <span class="tag">Event Management</span>
+          <span class="tag">Budget Management</span>
+          <span class="tag">Process Improvement</span>
+          <span class="tag">Cross-cultural Teams</span>
+          <span class="tag">Ownership Mindset</span>
+          <span class="tag">Client Relations</span>
+          <span class="tag">Ambiguity Tolerance</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section class="education" id="education">
+  <div class="section-inner">
+    <p class="section-label">Academic Background</p>
+    <h2 class="section-title">My <span>education</span></h2>
+    <div class="edu-grid">
+      <div class="edu-card">
+        <div class="edu-degree">MSc Sustainable Finance</div>
+        <div class="edu-school">BI Norwegian Business School</div>
+        <div class="edu-year">2024 – 2026 · Oslo, Norway</div>
+        <p style="margin-top:1rem; font-size:0.88rem; color:#6b7280; line-height:1.6;">
+          Thesis on renewable energy and data-driven decision making. Focus on ESG integration,
+          sustainable investment, and quantitative finance.
+        </p>
+      </div>
+      <div class="edu-card">
+        <div class="edu-degree">Bachelor in Business Administration</div>
+        <div class="edu-school">BI Norwegian Business School</div>
+        <div class="edu-year">2021 – 2024 · Oslo, Norway</div>
+        <p style="margin-top:1rem; font-size:0.88rem; color:#6b7280; line-height:1.6;">
+          Broad foundation in business, finance, and management. Active in student organizations
+          throughout — VP, Financial Officer, Event Coordinator.
+        </p>
+      </div>
+      <div class="edu-card">
+        <div class="edu-degree">GCMS Forex Trading Diploma</div>
+        <div class="edu-school">Global Capital Market Solutions</div>
+        <div class="edu-year">2021 · Oslo, Norway</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-degree">IB Diploma (High School)</div>
+        <div class="edu-school">Skagerak International School</div>
+        <div class="edu-year">2018 – 2021 · Sandefjord, Norway</div>
+        <p style="margin-top:1rem; font-size:0.88rem; color:#6b7280; line-height:1.6;">
+          International Baccalaureate — built global perspective and academic rigour early on.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VOLUNTEERING -->
+<section class="volunteering" id="volunteering">
+  <div class="section-inner">
+    <p class="section-label">Heart & Community</p>
+    <h2 class="section-title">Beyond <span>work</span></h2>
+    <div class="vol-grid">
+      <div class="vol-card">
+        <div class="vol-icon">🌶️</div>
+        <div class="vol-title">Art of Spices</div>
+        <div class="vol-org">Community Initiative · 2019–2021</div>
+        <div class="vol-desc">Led a charity cooking group — we cooked, learned, and ate together, donating all profits to Care4 charity.</div>
+      </div>
+      <div class="vol-card">
+        <div class="vol-icon">❤️</div>
+        <div class="vol-title">Best Buddies</div>
+        <div class="vol-org">Voluntary · 2020–2021</div>
+        <div class="vol-desc">Part of a voluntary group babysitting children with special needs, building patience, empathy, and trust.</div>
+      </div>
+      <div class="vol-card">
+        <div class="vol-icon">🎮</div>
+        <div class="vol-title">SFO Children Helper</div>
+        <div class="vol-org">Voluntary · 2019–2021</div>
+        <div class="vol-desc">Helped and played with children after school — because showing up for the small moments matters.</div>
+      </div>
+      <div class="vol-card">
+        <div class="vol-icon">🍔</div>
+        <div class="vol-title">Cashier & Chef</div>
+        <div class="vol-org">Bastard Burgers · 2022–2026</div>
+        <div class="vol-desc">Four years in a fast-paced restaurant — kept customer satisfaction high and stayed grounded in everyday work.</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 3rem;">
+      <p class="section-label">Languages</p>
+      <div class="languages-row">
+        <div class="lang-pill">
+          <span style="font-size:1.4rem">🇳🇴</span>
+          <div><div class="lang-name">Norwegian</div><div class="lang-level">Fluent</div></div>
+        </div>
+        <div class="lang-pill">
+          <span style="font-size:1.4rem">🇬🇧</span>
+          <div><div class="lang-name">English</div><div class="lang-level">Highly Proficient</div></div>
+        </div>
+        <div class="lang-pill">
+          <span style="font-size:1.4rem">🇮🇳</span>
+          <div><div class="lang-name">Hindi</div><div class="lang-level">Native</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="section-inner">
+    <p class="section-label">Let's Connect</p>
+    <h2 class="section-title">Get in <span>touch</span></h2>
+    <p class="contact-subtitle">
+      Whether you're working on sustainability, data, or something at the intersection —
+      I'd love to hear from you.
+    </p>
+    <div class="contact-links">
+      <a href="mailto:dardarohit9740@gmail.com" class="contact-link">
+        <span class="contact-link-icon">✉️</span>
+        dardarohit9740@gmail.com
+      </a>
+      <a href="tel:+4746715199" class="contact-link">
+        <span class="contact-link-icon">📞</span>
+        +47 467 15 199
+      </a>
+      <a href="https://www.linkedin.com/in/rohit-darda-4637501b0/" target="_blank" class="contact-link">
+        <span class="contact-link-icon">💼</span>
+        LinkedIn Profile
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Rohit Vijay Darda · Oslo, Norway</p>
+</footer>
+
+<script>
+  // Intersection Observer for timeline items
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.timeline-item').forEach(item => observer.observe(item));
+
+  // Skill bar animation
+  const skillObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.skill-fill').forEach(bar => {
+          bar.style.width = bar.dataset.width + '%';
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.skills-grid').forEach(el => skillObserver.observe(el));
+
+  // Smooth nav highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 100) current = sec.id;
+    });
+    navLinks.forEach(link => {
+      link.style.color = link.getAttribute('href') === '#' + current
+        ? 'var(--green-light)' : 'rgba(255,255,255,0.7)';
+    });
+  });
+</script>
+</body>
+</html>
