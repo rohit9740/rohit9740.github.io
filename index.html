@@ -3,324 +3,452 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rohit Vijay Darda — Portfolio</title>
+  <title>Rohit Vijay Darda</title>
+  <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
   <style>
-    :root {
-      --green-dark: #1a3a2a;
-      --green-mid: #2d6a4f;
-      --green-light: #52b788;
-      --green-pale: #b7e4c7;
-      --cream: #f8f5f0;
-      --charcoal: #1c1c1c;
-      --grey: #6b7280;
-      --white: #ffffff;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
 
+    :root {
+      --green: #00ff88;
+      --green-mid: #52b788;
+      --green-dark: #0a1a0f;
+      --glass-bg: rgba(5, 15, 8, 0.75);
+      --glass-border: rgba(0, 255, 136, 0.15);
+      --text: #e8f5ee;
+      --muted: rgba(232, 245, 238, 0.5);
+      --accent: #00ff88;
+    }
+
     body {
-      font-family: 'Georgia', 'Times New Roman', serif;
-      background: var(--cream);
-      color: var(--charcoal);
+      font-family: 'Georgia', serif;
+      background: #030805;
+      color: var(--text);
       overflow-x: hidden;
     }
+
+    /* ── SVG FILTER (Glass) ── */
+    #svg-filters { display: none; }
+
+    /* ── SHADER BACKGROUND ── */
+    #shader-bg {
+      position: fixed; inset: 0;
+      z-index: 0; pointer-events: none;
+    }
+    #shader-bg canvas { width: 100% !important; height: 100% !important; }
 
     /* ── NAV ── */
     nav {
       position: fixed; top: 0; width: 100%; z-index: 999;
-      background: rgba(26, 58, 42, 0.95);
-      backdrop-filter: blur(12px);
       display: flex; justify-content: space-between; align-items: center;
-      padding: 1rem 3rem;
-      border-bottom: 1px solid rgba(82, 183, 136, 0.2);
+      padding: 1.1rem 3rem;
+      background: rgba(3, 8, 5, 0.6);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
     }
     .nav-logo {
-      font-size: 1.1rem; color: var(--green-pale); letter-spacing: 2px;
-      font-family: 'Arial', sans-serif; font-weight: 300;
+      font-family: 'Arial', sans-serif; font-size: 1rem;
+      letter-spacing: 4px; color: var(--green); font-weight: 300;
     }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
     .nav-links a {
-      color: rgba(255,255,255,0.7); text-decoration: none;
-      font-family: 'Arial', sans-serif; font-size: 0.85rem; letter-spacing: 1px;
+      color: var(--muted); text-decoration: none;
+      font-family: 'Arial', sans-serif; font-size: 0.78rem;
+      letter-spacing: 2px; text-transform: uppercase;
       transition: color 0.3s;
     }
-    .nav-links a:hover { color: var(--green-light); }
+    .nav-links a:hover, .nav-links a.active { color: var(--green); }
 
     /* ── HERO ── */
-    .hero {
+    #hero {
+      position: relative; z-index: 1;
       min-height: 100vh;
-      background: linear-gradient(135deg, var(--green-dark) 0%, #0d2318 50%, #1a2f1a 100%);
-      display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden;
-      padding-top: 80px;
-    }
-    .hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 70% 50%, rgba(82,183,136,0.08) 0%, transparent 60%);
-    }
-    .hero-grid {
       display: grid; grid-template-columns: 1fr 1fr;
-      max-width: 1100px; width: 100%; padding: 0 3rem; gap: 4rem;
-      align-items: center; position: relative;
+      align-items: center; padding: 0 5rem;
+      padding-top: 80px; gap: 2rem;
     }
-    .hero-text { animation: fadeInUp 0.8s ease both; }
+    .hero-left { display: flex; flex-direction: column; gap: 1.5rem; }
     .hero-label {
-      font-family: 'Arial', sans-serif; font-size: 0.75rem;
-      letter-spacing: 4px; color: var(--green-light);
-      text-transform: uppercase; margin-bottom: 1.2rem;
+      font-family: 'Arial', sans-serif; font-size: 0.7rem;
+      letter-spacing: 5px; color: var(--green); text-transform: uppercase;
     }
     .hero-name {
-      font-size: clamp(2.8rem, 5vw, 4.5rem); color: var(--white);
-      line-height: 1.1; margin-bottom: 1.2rem; font-weight: normal;
+      font-size: clamp(3rem, 5vw, 5.5rem); font-weight: normal;
+      line-height: 1.05; color: #fff;
     }
-    .hero-name span { color: var(--green-light); }
+    .hero-name em { font-style: normal; color: var(--green); }
     .hero-tagline {
-      font-size: 1.1rem; color: rgba(255,255,255,0.6);
-      line-height: 1.7; margin-bottom: 2rem;
-      font-style: italic;
+      font-size: 1rem; color: var(--muted); line-height: 1.8;
+      max-width: 440px; font-style: italic;
     }
     .hero-quote {
-      font-size: 0.95rem; color: var(--green-pale);
-      border-left: 2px solid var(--green-light);
-      padding-left: 1rem; line-height: 1.6;
-      font-style: italic;
+      font-size: 0.9rem; color: var(--green-mid);
+      border-left: 2px solid var(--green);
+      padding-left: 1.2rem; line-height: 1.7; font-style: italic;
+      max-width: 420px;
     }
-    .hero-cta {
-      display: flex; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap;
-    }
-    .btn {
-      display: inline-block; padding: 0.8rem 2rem;
-      font-family: 'Arial', sans-serif; font-size: 0.85rem;
-      letter-spacing: 1px; text-decoration: none;
-      border-radius: 2px; transition: all 0.3s; cursor: pointer;
-    }
-    .btn-primary {
-      background: var(--green-light); color: var(--green-dark);
-      font-weight: 700;
-    }
-    .btn-primary:hover { background: var(--green-pale); transform: translateY(-2px); }
-    .btn-outline {
-      border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.8);
-    }
-    .btn-outline:hover { border-color: var(--green-light); color: var(--green-light); }
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
 
-    .hero-visual {
-      display: flex; flex-direction: column; align-items: center; gap: 2rem;
-      animation: fadeInRight 0.8s ease 0.2s both;
+    /* Glass Button */
+    .glass-btn {
+      position: relative; display: inline-flex; align-items: center;
+      padding: 0.85rem 2rem; border-radius: 999px;
+      font-family: 'Arial', sans-serif; font-size: 0.8rem;
+      letter-spacing: 2px; text-transform: uppercase;
+      text-decoration: none; cursor: pointer; overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--glass-border);
     }
-    .hero-photo-frame {
-      width: 280px; height: 280px; border-radius: 50%;
-      border: 3px solid var(--green-light);
-      background: linear-gradient(135deg, var(--green-mid), var(--green-dark));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 6rem; box-shadow: 0 0 60px rgba(82,183,136,0.2);
-      overflow: hidden; position: relative;
+    .glass-btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      backdrop-filter: blur(6px);
+      filter: url(#glass-distortion);
     }
-    .hero-photo-frame img {
-      width: 100%; height: 100%; object-fit: cover;
+    .glass-btn::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,0.08);
+      box-shadow: inset 2px 2px 1px rgba(255,255,255,0.25),
+                  inset -1px -1px 1px rgba(255,255,255,0.15);
+      border-radius: inherit;
     }
+    .glass-btn span { position: relative; z-index: 1; color: #fff; }
+    .glass-btn:hover { transform: scale(1.04) translateY(-2px); }
+    .glass-btn.primary::after {
+      background: rgba(0,255,136,0.15);
+      box-shadow: inset 2px 2px 1px rgba(0,255,136,0.3), inset -1px -1px 1px rgba(0,255,136,0.2);
+    }
+    .glass-btn.primary span { color: var(--green); }
+
+    /* Particle Canvas */
+    #particle-canvas {
+      width: 100%; max-width: 560px; height: 320px;
+      border-radius: 16px;
+      border: 1px solid var(--glass-border);
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+    }
+
+    /* Hero stats */
     .hero-stats {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
-      width: 100%;
+      position: absolute; bottom: 3rem; left: 5rem;
+      display: flex; gap: 2rem;
     }
-    .stat-card {
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(82,183,136,0.2);
-      border-radius: 8px; padding: 1.2rem; text-align: center;
+    .stat-item { text-align: left; }
+    .stat-num {
+      font-size: 2rem; color: var(--green); font-family: 'Arial', sans-serif;
+      font-weight: 700; line-height: 1;
     }
-    .stat-number { font-size: 1.6rem; color: var(--green-light); font-weight: bold; }
-    .stat-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); font-family: 'Arial', sans-serif; letter-spacing: 1px; margin-top: 0.3rem; }
+    .stat-lbl {
+      font-size: 0.65rem; color: var(--muted); letter-spacing: 2px;
+      text-transform: uppercase; font-family: 'Arial', sans-serif; margin-top: 0.3rem;
+    }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute; bottom: 2rem; right: 5rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      color: var(--muted); font-family: 'Arial', sans-serif;
+      font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, var(--green), transparent);
+      animation: scrollLine 1.5s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(0.5); }
+    }
 
     /* ── SECTIONS ── */
-    section { padding: 6rem 3rem; }
-    .section-inner { max-width: 1100px; margin: 0 auto; }
-    .section-label {
-      font-family: 'Arial', sans-serif; font-size: 0.75rem;
-      letter-spacing: 4px; color: var(--green-mid);
-      text-transform: uppercase; margin-bottom: 0.8rem;
+    section {
+      position: relative; z-index: 1;
+      padding: 7rem 5rem;
     }
-    .section-title {
-      font-size: clamp(2rem, 3vw, 2.8rem); color: var(--green-dark);
-      margin-bottom: 3rem; font-weight: normal;
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+
+    section:not(#hero) {
+      background: rgba(3, 8, 5, 0.92);
+      backdrop-filter: blur(8px);
     }
-    .section-title span { color: var(--green-mid); }
+    section:nth-child(even):not(#hero) {
+      background: rgba(5, 12, 7, 0.95);
+    }
+
+    .sec-label {
+      font-family: 'Arial', sans-serif; font-size: 0.68rem;
+      letter-spacing: 5px; color: var(--green); text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+    .sec-title {
+      font-size: clamp(2rem, 3vw, 3rem); font-weight: normal;
+      color: #fff; margin-bottom: 3.5rem;
+    }
+    .sec-title em { font-style: normal; color: var(--green); }
 
     /* ── ABOUT ── */
-    .about { background: var(--white); }
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .about-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 5rem; align-items: start; }
     .about-text p {
-      font-size: 1.05rem; line-height: 1.85; color: #374151; margin-bottom: 1.5rem;
+      font-size: 1.05rem; line-height: 1.9; color: var(--muted);
+      margin-bottom: 1.6rem;
     }
-    .about-text .highlight { color: var(--green-mid); font-style: italic; }
-    .about-facts { display: flex; flex-direction: column; gap: 1.2rem; }
-    .fact-item {
+    .about-text .hl { color: var(--green); font-style: normal; }
+    .about-facts { display: flex; flex-direction: column; gap: 1rem; }
+
+    /* Glass Fact Card */
+    .fact-card {
       display: flex; gap: 1rem; align-items: flex-start;
-      padding: 1.2rem; background: var(--cream); border-radius: 8px;
-      border-left: 3px solid var(--green-light);
+      padding: 1.2rem 1.4rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      backdrop-filter: blur(12px);
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
     }
-    .fact-icon { font-size: 1.4rem; flex-shrink: 0; }
-    .fact-label { font-family: 'Arial', sans-serif; font-size: 0.75rem; color: var(--grey); letter-spacing: 1px; text-transform: uppercase; }
-    .fact-value { font-size: 0.95rem; color: var(--charcoal); margin-top: 0.2rem; }
+    .fact-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,255,136,0.04), transparent);
+      pointer-events: none;
+    }
+    .fact-card:hover { border-color: rgba(0,255,136,0.4); transform: translateX(4px); }
+    .fact-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .fact-label { font-family: 'Arial', sans-serif; font-size: 0.65rem; color: var(--green); letter-spacing: 2px; text-transform: uppercase; }
+    .fact-val { font-size: 0.9rem; color: var(--text); margin-top: 0.25rem; }
+
+    /* ── GLOW CARDS (from 21dev) ── */
+    [data-glow] {
+      --border-size: calc(var(--border, 2) * 1px);
+      --spotlight-size: calc(var(--size, 150) * 1px);
+      --hue: calc(var(--base, 120) + (var(--xp, 0) * var(--spread, 200)));
+      background-image: radial-gradient(
+        var(--spotlight-size) var(--spotlight-size) at
+        calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
+        hsl(var(--hue) 100% 60% / 0.08), transparent
+      );
+      background-color: var(--glass-bg);
+      background-size: calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)));
+      background-position: 50% 50%;
+      background-attachment: fixed;
+      border: var(--border-size) solid rgba(0,255,136,0.12);
+      position: relative; touch-action: none;
+      transition: border-color 0.3s;
+    }
+    [data-glow]:hover { border-color: rgba(0,255,136,0.35); }
+
+    [data-glow]::before,
+    [data-glow]::after {
+      pointer-events: none; content: "";
+      position: absolute; inset: calc(var(--border-size) * -1);
+      border: var(--border-size) solid transparent;
+      border-radius: inherit;
+      background-attachment: fixed;
+      background-size: calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)));
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      mask: linear-gradient(transparent, transparent), linear-gradient(white, white);
+      mask-clip: padding-box, border-box;
+      mask-composite: intersect;
+    }
+    [data-glow]::before {
+      background-image: radial-gradient(
+        calc(var(--spotlight-size) * 0.75) calc(var(--spotlight-size) * 0.75) at
+        calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
+        hsl(var(--hue) 100% 50% / 1), transparent 100%
+      );
+      filter: brightness(2);
+    }
+    [data-glow]::after {
+      background-image: radial-gradient(
+        calc(var(--spotlight-size) * 0.5) calc(var(--spotlight-size) * 0.5) at
+        calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
+        hsl(0 100% 100% / 1), transparent 100%
+      );
+    }
 
     /* ── EXPERIENCE ── */
-    .experience { background: var(--cream); }
-    .timeline { position: relative; }
+    .timeline { position: relative; padding-left: 2rem; }
     .timeline::before {
-      content: ''; position: absolute; left: 20px; top: 0; bottom: 0;
-      width: 2px; background: linear-gradient(to bottom, var(--green-light), transparent);
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 1px; background: linear-gradient(to bottom, var(--green), transparent);
     }
-    .timeline-item {
-      display: flex; gap: 2.5rem; margin-bottom: 3rem;
-      padding-left: 3.5rem; position: relative;
-      opacity: 0; transform: translateY(20px);
+    .t-item {
+      margin-bottom: 2.5rem; position: relative;
+      opacity: 0; transform: translateY(24px);
       transition: opacity 0.6s ease, transform 0.6s ease;
     }
-    .timeline-item.visible { opacity: 1; transform: translateY(0); }
-    .timeline-dot {
-      position: absolute; left: 12px; top: 6px;
-      width: 18px; height: 18px; border-radius: 50%;
-      background: var(--green-light); border: 3px solid var(--cream);
-      flex-shrink: 0;
+    .t-item.vis { opacity: 1; transform: translateY(0); }
+    .t-dot {
+      position: absolute; left: -2.42rem; top: 1.4rem;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--green-dark); border: 2px solid var(--green);
+      box-shadow: 0 0 12px rgba(0,255,136,0.5);
     }
-    .timeline-dot.accent { background: var(--green-mid); }
-    .timeline-content {
-      background: var(--white); border-radius: 12px; padding: 1.8rem 2rem;
-      flex: 1; border: 1px solid rgba(0,0,0,0.06);
-      box-shadow: 0 2px 16px rgba(0,0,0,0.04);
-      transition: transform 0.3s, box-shadow 0.3s;
+    .t-card {
+      --base: 120; --spread: 180; --size: 220; --border: 1;
+      border-radius: 14px; padding: 1.8rem 2rem;
+      backdrop-filter: blur(12px);
+      cursor: default;
     }
-    .timeline-content:hover {
-      transform: translateX(4px); box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    .t-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1rem; }
+    .t-role { font-size: 1rem; font-weight: bold; color: #fff; }
+    .t-company { font-size: 0.85rem; color: var(--green); margin-top: 0.2rem; }
+    .t-period {
+      font-family: 'Arial', sans-serif; font-size: 0.7rem;
+      background: rgba(0,255,136,0.1); color: var(--green);
+      border: 1px solid rgba(0,255,136,0.25); border-radius: 999px;
+      padding: 0.25rem 0.9rem; white-space: nowrap; flex-shrink: 0;
     }
-    .timeline-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
-    .timeline-role { font-size: 1.05rem; font-weight: bold; color: var(--green-dark); }
-    .timeline-company { color: var(--green-mid); font-size: 0.9rem; margin-bottom: 0.3rem; }
-    .timeline-period {
-      font-family: 'Arial', sans-serif; font-size: 0.75rem;
-      background: var(--green-pale); color: var(--green-dark);
-      padding: 0.2rem 0.8rem; border-radius: 20px; white-space: nowrap;
+    .t-bullets { list-style: none; }
+    .t-bullets li {
+      font-size: 0.88rem; color: var(--muted); line-height: 1.65;
+      padding: 0.25rem 0 0.25rem 1.4rem; position: relative;
     }
-    .timeline-bullets { list-style: none; margin-top: 0.8rem; }
-    .timeline-bullets li {
-      font-size: 0.9rem; color: #4b5563; line-height: 1.6;
-      padding: 0.3rem 0; padding-left: 1.2rem; position: relative;
-    }
-    .timeline-bullets li::before {
-      content: '→'; position: absolute; left: 0; color: var(--green-light);
-      font-size: 0.8rem;
+    .t-bullets li::before {
+      content: '→'; position: absolute; left: 0; color: var(--green); font-size: 0.75rem;
     }
 
     /* ── SKILLS ── */
-    .skills { background: var(--green-dark); }
-    .skills .section-title { color: var(--white); }
-    .skills .section-label { color: var(--green-light); }
-    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-    .skill-category { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 2rem; border: 1px solid rgba(82,183,136,0.2); }
-    .skill-cat-title { font-family: 'Arial', sans-serif; font-size: 0.8rem; letter-spacing: 2px; color: var(--green-light); text-transform: uppercase; margin-bottom: 1.5rem; }
-    .skill-item { margin-bottom: 1.2rem; }
-    .skill-name { font-family: 'Arial', sans-serif; font-size: 0.85rem; color: rgba(255,255,255,0.8); display: flex; justify-content: space-between; margin-bottom: 0.4rem; }
-    .skill-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
-    .skill-fill { height: 100%; background: linear-gradient(to right, var(--green-light), var(--green-pale)); border-radius: 2px; width: 0; transition: width 1.2s ease; }
-    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.8rem; }
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+    .skill-cat {
+      --base: 120; --spread: 160; --size: 240; --border: 1;
+      border-radius: 14px; padding: 2rem;
+      backdrop-filter: blur(12px);
+    }
+    .skill-cat-title {
+      font-family: 'Arial', sans-serif; font-size: 0.68rem;
+      letter-spacing: 3px; color: var(--green); text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .skill-row { margin-bottom: 1.3rem; }
+    .skill-meta { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+    .skill-name-txt { font-family: 'Arial', sans-serif; font-size: 0.82rem; color: var(--text); }
+    .skill-pct { font-family: 'Arial', sans-serif; font-size: 0.75rem; color: var(--green); }
+    .skill-track { height: 3px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; }
+    .skill-fill {
+      height: 100%; width: 0; border-radius: 2px;
+      background: linear-gradient(to right, var(--green), #b7e4c7);
+      transition: width 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.5rem; }
     .tag {
-      font-family: 'Arial', sans-serif; font-size: 0.75rem;
-      background: rgba(82,183,136,0.15); color: var(--green-pale);
-      border: 1px solid rgba(82,183,136,0.3); border-radius: 4px;
-      padding: 0.3rem 0.8rem; letter-spacing: 0.5px;
+      font-family: 'Arial', sans-serif; font-size: 0.72rem;
+      color: var(--green-mid); background: rgba(0,255,136,0.06);
+      border: 1px solid rgba(0,255,136,0.2); border-radius: 4px;
+      padding: 0.3rem 0.75rem; letter-spacing: 0.5px;
     }
 
     /* ── EDUCATION ── */
-    .education { background: var(--white); }
     .edu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
     .edu-card {
-      border: 1px solid rgba(0,0,0,0.08); border-radius: 12px; padding: 2rem;
-      transition: transform 0.3s, box-shadow 0.3s;
-      border-top: 4px solid var(--green-light);
+      --base: 120; --spread: 160; --size: 200; --border: 1;
+      border-radius: 14px; padding: 2rem;
+      backdrop-filter: blur(12px); cursor: default;
+      border-top: 3px solid var(--green) !important;
+      transition: transform 0.3s;
     }
-    .edu-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
-    .edu-degree { font-size: 1rem; font-weight: bold; color: var(--green-dark); margin-bottom: 0.5rem; }
-    .edu-school { color: var(--green-mid); font-size: 0.9rem; margin-bottom: 0.4rem; }
-    .edu-year { font-family: 'Arial', sans-serif; font-size: 0.75rem; color: var(--grey); }
+    .edu-card:hover { transform: translateY(-4px); }
+    .edu-deg { font-size: 0.95rem; font-weight: bold; color: #fff; margin-bottom: 0.6rem; }
+    .edu-school { color: var(--green); font-size: 0.85rem; margin-bottom: 0.4rem; }
+    .edu-year { font-family: 'Arial', sans-serif; font-size: 0.72rem; color: var(--muted); margin-bottom: 0.8rem; }
+    .edu-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.6; }
 
-    /* ── VOLUNTEERING ── */
-    .volunteering { background: var(--cream); }
-    .vol-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+    /* ── BEYOND ── */
+    .vol-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
     .vol-card {
-      background: var(--white); border-radius: 12px; padding: 1.8rem;
-      border: 1px solid rgba(0,0,0,0.06);
-      display: flex; flex-direction: column; gap: 0.8rem;
+      --base: 120; --spread: 160; --size: 180; --border: 1;
+      border-radius: 14px; padding: 1.8rem;
+      backdrop-filter: blur(12px); cursor: default;
     }
-    .vol-icon { font-size: 2rem; }
-    .vol-title { font-size: 1rem; font-weight: bold; color: var(--green-dark); }
-    .vol-org { font-size: 0.85rem; color: var(--green-mid); }
-    .vol-desc { font-size: 0.88rem; color: var(--grey); line-height: 1.6; }
+    .vol-icon { font-size: 2rem; margin-bottom: 0.8rem; display: block; }
+    .vol-title { font-size: 0.95rem; font-weight: bold; color: #fff; margin-bottom: 0.3rem; }
+    .vol-org { font-size: 0.8rem; color: var(--green); margin-bottom: 0.7rem; }
+    .vol-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.6; }
 
-    /* ── LANGUAGES ── */
-    .languages-row { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; }
+    .lang-row { display: flex; gap: 1.2rem; flex-wrap: wrap; }
     .lang-pill {
       display: flex; align-items: center; gap: 0.8rem;
-      background: var(--white); border: 1px solid rgba(0,0,0,0.08);
-      border-radius: 50px; padding: 0.8rem 1.5rem;
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      border-radius: 999px; padding: 0.8rem 1.6rem;
+      backdrop-filter: blur(12px);
     }
-    .lang-name { font-size: 0.95rem; font-weight: bold; color: var(--green-dark); }
-    .lang-level { font-size: 0.78rem; color: var(--grey); font-family: 'Arial', sans-serif; }
+    .lang-flag { font-size: 1.4rem; }
+    .lang-name { font-size: 0.9rem; font-weight: bold; color: #fff; }
+    .lang-level { font-family: 'Arial', sans-serif; font-size: 0.7rem; color: var(--green); }
 
     /* ── CONTACT ── */
-    .contact {
-      background: linear-gradient(135deg, var(--green-dark) 0%, #0d2318 100%);
-      text-align: center;
-    }
-    .contact .section-title { color: var(--white); }
-    .contact .section-label { color: var(--green-light); }
-    .contact-subtitle { font-size: 1.05rem; color: rgba(255,255,255,0.6); margin-bottom: 3rem; max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.7; }
-    .contact-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+    #contact { text-align: center; }
+    .contact-sub { font-size: 1rem; color: var(--muted); max-width: 460px; margin: 0 auto 3rem; line-height: 1.8; font-style: italic; }
+    .contact-links { display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap; }
     .contact-link {
-      display: flex; align-items: center; gap: 0.8rem;
-      background: rgba(255,255,255,0.06); border: 1px solid rgba(82,183,136,0.3);
-      border-radius: 8px; padding: 1.2rem 2rem;
-      color: rgba(255,255,255,0.85); text-decoration: none;
-      font-family: 'Arial', sans-serif; font-size: 0.9rem;
-      transition: all 0.3s;
+      position: relative; display: flex; align-items: center; gap: 0.8rem;
+      padding: 1.1rem 2rem; border-radius: 14px;
+      text-decoration: none;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      color: var(--text); font-family: 'Arial', sans-serif; font-size: 0.85rem;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 2px 2px 1px rgba(255,255,255,0.05);
     }
-    .contact-link:hover { background: rgba(82,183,136,0.15); border-color: var(--green-light); color: var(--white); transform: translateY(-2px); }
-    .contact-link-icon { font-size: 1.2rem; }
+    .contact-link::before {
+      content: ''; position: absolute; inset: 0;
+      backdrop-filter: blur(3px);
+      filter: url(#glass-distortion);
+      pointer-events: none;
+    }
+    .contact-link:hover { border-color: rgba(0,255,136,0.5); transform: translateY(-3px) scale(1.02); color: var(--green); }
+    .contact-link-icon { font-size: 1.2rem; position: relative; z-index: 1; }
+    .contact-link-text { position: relative; z-index: 1; }
 
-    /* ── FOOTER ── */
     footer {
-      background: #0a1a10; text-align: center; padding: 2rem;
-      font-family: 'Arial', sans-serif; font-size: 0.8rem;
-      color: rgba(255,255,255,0.3);
-    }
-
-    /* ── ANIMATIONS ── */
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeInRight {
-      from { opacity: 0; transform: translateX(30px); }
-      to { opacity: 1; transform: translateX(0); }
+      position: relative; z-index: 1;
+      background: rgba(2, 6, 3, 0.98);
+      text-align: center; padding: 2rem;
+      font-family: 'Arial', sans-serif; font-size: 0.75rem;
+      color: rgba(255,255,255,0.2);
+      border-top: 1px solid var(--glass-border);
     }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
+    @media (max-width: 900px) {
       nav { padding: 1rem 1.5rem; }
       .nav-links { display: none; }
-      section { padding: 4rem 1.5rem; }
-      .hero-grid { grid-template-columns: 1fr; gap: 2rem; padding: 0 1.5rem; text-align: center; }
-      .hero-visual { order: -1; }
-      .hero-photo-frame { width: 200px; height: 200px; margin: 0 auto; }
-      .hero-stats { grid-template-columns: repeat(3, 1fr); }
+      section { padding: 5rem 1.5rem; }
+      #hero { grid-template-columns: 1fr; padding: 5rem 1.5rem 8rem; gap: 3rem; }
+      .hero-stats { left: 1.5rem; bottom: 2rem; gap: 1.5rem; }
+      .scroll-hint { display: none; }
+      #particle-canvas { max-width: 100%; }
       .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-      .timeline::before { left: 8px; }
-      .timeline-item { padding-left: 2.5rem; }
-      .timeline-dot { left: 0; }
+      .timeline { padding-left: 1.5rem; }
     }
   </style>
 </head>
 <body>
+
+<!-- SVG Glass Distortion Filter -->
+<svg id="svg-filters">
+  <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%" filterUnits="objectBoundingBox">
+    <feTurbulence type="fractalNoise" baseFrequency="0.001 0.005" numOctaves="1" seed="17" result="turbulence"/>
+    <feComponentTransfer in="turbulence" result="mapped">
+      <feFuncR type="gamma" amplitude="1" exponent="10" offset="0.5"/>
+      <feFuncG type="gamma" amplitude="0" exponent="1" offset="0"/>
+      <feFuncB type="gamma" amplitude="0" exponent="1" offset="0.5"/>
+    </feComponentTransfer>
+    <feGaussianBlur in="turbulence" stdDeviation="3" result="softMap"/>
+    <feSpecularLighting in="softMap" surfaceScale="5" specularConstant="1" specularExponent="100" lightingColor="white" result="specLight">
+      <fePointLight x="-200" y="-200" z="300"/>
+    </feSpecularLighting>
+    <feComposite in="specLight" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litImage"/>
+    <feDisplacementMap in="SourceGraphic" in2="softMap" scale="200" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<!-- Shader Background -->
+<div id="shader-bg"></div>
 
 <!-- NAV -->
 <nav>
@@ -330,112 +458,98 @@
     <li><a href="#experience">Experience</a></li>
     <li><a href="#skills">Skills</a></li>
     <li><a href="#education">Education</a></li>
-    <li><a href="#volunteering">Beyond Work</a></li>
+    <li><a href="#beyond">Beyond Work</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
 
 <!-- HERO -->
-<section class="hero" id="home">
-  <div class="hero-grid">
-    <div class="hero-text">
-      <p class="hero-label">Sustainable Finance & Data</p>
-      <h1 class="hero-name">Rohit<br/>Vijay <span>Darda</span></h1>
-      <p class="hero-tagline">
-        Master's student at BI Norwegian Business School.<br/>
-        Bridging data, sustainability, and real-world decisions.
-      </p>
-      <p class="hero-quote">
-        "The real challenge is not ambition — it is execution.<br/>
-        And execution depends on data that people can actually use."
-      </p>
-      <div class="hero-cta">
-        <a href="#experience" class="btn btn-primary">View My Work</a>
-        <a href="#contact" class="btn btn-outline">Get in Touch</a>
-      </div>
+<section id="hero">
+  <div class="hero-left">
+    <p class="hero-label">Sustainable Finance · Data · Oslo</p>
+    <h1 class="hero-name">Rohit<br/><em>Vijay</em><br/>Darda</h1>
+    <p class="hero-tagline">
+      Bridging data and sustainability — turning messy numbers into decisions that actually matter.
+    </p>
+    <p class="hero-quote">
+      "The real challenge is not ambition — it is execution.<br/>
+      And execution depends on data people can actually use."
+    </p>
+    <div class="hero-cta">
+      <a href="#experience" class="glass-btn primary"><span>View Work</span></a>
+      <a href="#contact" class="glass-btn"><span>Get in Touch</span></a>
     </div>
-    <div class="hero-visual">
-      <div class="hero-photo-frame">
-        <span style="font-size:5rem">👤</span>
-      </div>
-      <div class="hero-stats">
-        <div class="stat-card">
-          <div class="stat-number">2.5M</div>
-          <div class="stat-label">NOK Managed</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">700+</div>
-          <div class="stat-label">Buddies Led</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">3</div>
-          <div class="stat-label">Languages</div>
-        </div>
-      </div>
+  </div>
+  <canvas id="particle-canvas" width="560" height="320"></canvas>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">2.5M</div>
+      <div class="stat-lbl">NOK Managed</div>
     </div>
+    <div class="stat-item">
+      <div class="stat-num">700+</div>
+      <div class="stat-lbl">Buddies Led</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">3</div>
+      <div class="stat-lbl">Languages</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">5+</div>
+      <div class="stat-lbl">Years in Oslo</div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
   </div>
 </section>
 
 <!-- ABOUT -->
-<section class="about" id="about">
+<section id="about">
   <div class="section-inner">
-    <p class="section-label">Who I Am</p>
-    <h2 class="section-title">A bit about <span>me</span></h2>
+    <p class="sec-label">Who I Am</p>
+    <h2 class="sec-title">A bit about <em>me</em></h2>
     <div class="about-grid">
       <div class="about-text">
         <p>
-          I'm a <span class="highlight">Master's student in Sustainable Finance</span> at BI Norwegian Business School, Oslo —
-          currently writing my thesis on renewable energy and data-driven decision making.
-          I grew up navigating three cultures (Indian, Norwegian, global), which shaped my curiosity
-          and comfort with complexity.
+          I'm a <em class="hl">Master's student in Sustainable Finance</em> at BI Norwegian Business School —
+          writing my thesis on renewable energy and data-driven decision making. Born Indian,
+          raised across three cultures, now firmly rooted in Oslo.
         </p>
         <p>
           What drives me is the gap between sustainability ambition and sustainability execution.
           I've seen first-hand at Orkla Foods Norge and the Norwegian Refugee Council how the right
-          data structure — clean, trusted, and understood — can change the decisions people make.
-          I want to be the person who builds that bridge.
+          data structure — clean, trusted, understood — changes the decisions people make.
+          I want to be the person who <em class="hl">builds that bridge.</em>
         </p>
         <p>
-          Outside of data and finance, I've organized <span class="highlight">Norway's largest student sustainability conference</span>,
-          cooked and donated meals to charity, babysat children with special needs,
-          and worked as a cashier and chef. I believe in showing up fully — wherever that is.
+          Outside work: I've organized Norway's largest student sustainability conference, led a
+          charity cooking club, babysat children with special needs, and worked as a chef and cashier
+          for four years. I show up fully — wherever that is.
         </p>
       </div>
       <div class="about-facts">
-        <div class="fact-item">
+        <div class="fact-card">
           <span class="fact-icon">📍</span>
-          <div>
-            <div class="fact-label">Location</div>
-            <div class="fact-value">Oslo, Norway</div>
-          </div>
+          <div><div class="fact-label">Location</div><div class="fact-val">Oslo, Norway</div></div>
         </div>
-        <div class="fact-item">
+        <div class="fact-card">
           <span class="fact-icon">🎓</span>
-          <div>
-            <div class="fact-label">Currently</div>
-            <div class="fact-value">MSc Sustainable Finance, BI (2024–2026)</div>
-          </div>
+          <div><div class="fact-label">Currently</div><div class="fact-val">MSc Sustainable Finance, BI (2024–2026)</div></div>
         </div>
-        <div class="fact-item">
-          <span class="fact-icon">🌱</span>
-          <div>
-            <div class="fact-label">Thesis Focus</div>
-            <div class="fact-value">Renewable Energy & Data-Driven Decision Making</div>
-          </div>
+        <div class="fact-card">
+          <span class="fact-icon">📝</span>
+          <div><div class="fact-label">Thesis</div><div class="fact-val">Renewable Energy & Data-Driven Decision Making</div></div>
         </div>
-        <div class="fact-item">
+        <div class="fact-card">
           <span class="fact-icon">💡</span>
-          <div>
-            <div class="fact-label">What I love</div>
-            <div class="fact-value">Turning messy data into clear, actionable insights</div>
-          </div>
+          <div><div class="fact-label">Superpower</div><div class="fact-val">Turning messy data into clear, trusted decisions</div></div>
         </div>
-        <div class="fact-item">
+        <div class="fact-card">
           <span class="fact-icon">🌍</span>
-          <div>
-            <div class="fact-label">Languages</div>
-            <div class="fact-value">Norwegian · English · Hindi</div>
-          </div>
+          <div><div class="fact-label">Languages</div><div class="fact-val">Norwegian · English · Hindi</div></div>
         </div>
       </div>
     </div>
@@ -443,116 +557,114 @@
 </section>
 
 <!-- EXPERIENCE -->
-<section class="experience" id="experience">
+<section id="experience">
   <div class="section-inner">
-    <p class="section-label">Career Journey</p>
-    <h2 class="section-title">Where I've <span>worked</span></h2>
+    <p class="sec-label">Career Journey</p>
+    <h2 class="sec-title">Where I've <em>worked</em></h2>
     <div class="timeline">
 
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-content">
-          <div class="timeline-header">
+      <div class="t-item">
+        <div class="t-dot"></div>
+        <div class="t-card" data-glow>
+          <div class="t-header">
             <div>
-              <div class="timeline-role">Data Analyst Intern — Produktutvikling</div>
-              <div class="timeline-company">Orkla Foods Norge AS</div>
+              <div class="t-role">Data Analyst Intern — Produktutvikling</div>
+              <div class="t-company">Orkla Foods Norge AS</div>
             </div>
-            <span class="timeline-period">Aug – Nov 2025</span>
+            <span class="t-period">Aug – Nov 2025</span>
           </div>
-          <ul class="timeline-bullets">
+          <ul class="t-bullets">
             <li>Built a KPI & project dashboard from scratch in Power BI — from data model to live reporting tool</li>
-            <li>Conducted ESG data analysis (PPWR, Scope 3 emissions) to support sustainability reporting</li>
+            <li>Conducted ESG analysis: Scope 3 emissions & PPWR compliance for sustainability reporting</li>
             <li>Structured and validated incomplete, inconsistent datasets to make them decision-ready</li>
             <li>Improved workflow and structure of product decision-making meetings</li>
           </ul>
         </div>
       </div>
 
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-content">
-          <div class="timeline-header">
+      <div class="t-item">
+        <div class="t-dot"></div>
+        <div class="t-card" data-glow>
+          <div class="t-header">
             <div>
-              <div class="timeline-role">Global Monitoring & Evaluation Intern</div>
-              <div class="timeline-company">Norwegian Refugee Council (NRC)</div>
+              <div class="t-role">Global Monitoring & Evaluation Intern</div>
+              <div class="t-company">Norwegian Refugee Council (NRC)</div>
             </div>
-            <span class="timeline-period">Jan – Apr 2024</span>
+            <span class="t-period">Jan – Apr 2024</span>
           </div>
-          <ul class="timeline-bullets">
-            <li>Cleaned and analysed data from multiple country offices to strengthen global reporting quality</li>
-            <li>Supported the Global M&E Specialist in updating the Better Learning Program (BLP) toolbox</li>
-            <li>Contributed to programs restoring psychosocial well-being for children in conflict-affected areas</li>
-            <li>Took ownership in ambiguous environments with no predefined starting point</li>
+          <ul class="t-bullets">
+            <li>Cleaned and analysed datasets from multiple country offices to strengthen global reporting</li>
+            <li>Supported the Global M&E Specialist in updating the Better Learning Program toolbox</li>
+            <li>Contributed to programs restoring psychosocial well-being for children in conflict zones</li>
+            <li>Took full ownership in ambiguous environments with no predefined starting point</li>
           </ul>
         </div>
       </div>
 
-      <div class="timeline-item">
-        <div class="timeline-dot accent"></div>
-        <div class="timeline-content">
-          <div class="timeline-header">
+      <div class="t-item">
+        <div class="t-dot"></div>
+        <div class="t-card" data-glow>
+          <div class="t-header">
             <div>
-              <div class="timeline-role">Financial Officer — Winter Games 2022</div>
-              <div class="timeline-company">BISO Oslo (Student Organization)</div>
+              <div class="t-role">Financial Officer — Winter Games 2022</div>
+              <div class="t-company">BISO Oslo</div>
             </div>
-            <span class="timeline-period">Oct 2021 – Feb 2022</span>
+            <span class="t-period">Oct 2021 – Feb 2022</span>
           </div>
-          <ul class="timeline-bullets">
-            <li>Oversaw a budget of <strong>2.5 million NOK</strong> for Norway's largest student winter event</li>
+          <ul class="t-bullets">
+            <li>Oversaw a budget of <strong style="color:#fff">2.5 million NOK</strong> for Norway's largest student winter event</li>
             <li>Managed financial reporting, accounting, and invoices end-to-end</li>
-            <li>Ensured accurate financial records and full budgetary compliance</li>
           </ul>
         </div>
       </div>
 
-      <div class="timeline-item">
-        <div class="timeline-dot accent"></div>
-        <div class="timeline-content">
-          <div class="timeline-header">
+      <div class="t-item">
+        <div class="t-dot"></div>
+        <div class="t-card" data-glow>
+          <div class="t-header">
             <div>
-              <div class="timeline-role">VP & Event Coordinator, BBA Board</div>
-              <div class="timeline-company">BISO Oslo (Student Organization)</div>
+              <div class="t-role">VP & Event Coordinator, BBA Board</div>
+              <div class="t-company">BISO Oslo</div>
             </div>
-            <span class="timeline-period">Sep 2022 – Jun 2023</span>
+            <span class="t-period">Sep 2022 – Jun 2023</span>
           </div>
-          <ul class="timeline-bullets">
+          <ul class="t-bullets">
             <li>Organized Norway's largest student sustainability conference (Impact)</li>
-            <li>Coordinated sustainable suppliers, budget management, and stakeholders</li>
-            <li>Managed multiple large-scale events simultaneously across departments</li>
+            <li>Coordinated sustainable suppliers, budget, and multi-stakeholder relationships</li>
           </ul>
         </div>
       </div>
 
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-content">
-          <div class="timeline-header">
+      <div class="t-item">
+        <div class="t-dot"></div>
+        <div class="t-card" data-glow>
+          <div class="t-header">
             <div>
-              <div class="timeline-role">Buddy Administrator — Fadderullan 2022</div>
-              <div class="timeline-company">BISO Oslo</div>
+              <div class="t-role">Buddy Administrator — Fadderullan 2022</div>
+              <div class="t-company">BISO Oslo</div>
             </div>
-            <span class="timeline-period">Feb – Aug 2022</span>
+            <span class="t-period">Feb – Aug 2022</span>
           </div>
-          <ul class="timeline-bullets">
-            <li>Recruited, managed, and supported <strong>700+ student buddies</strong></li>
-            <li>Led a team of ambassadors to ensure smooth event execution</li>
+          <ul class="t-bullets">
+            <li>Recruited, managed, and supported <strong style="color:#fff">700+ student buddies</strong></li>
+            <li>Led a team of ambassadors ensuring smooth large-scale event execution</li>
           </ul>
         </div>
       </div>
 
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-content">
-          <div class="timeline-header">
+      <div class="t-item">
+        <div class="t-dot"></div>
+        <div class="t-card" data-glow>
+          <div class="t-header">
             <div>
-              <div class="timeline-role">Customer Experience Ambassador</div>
-              <div class="timeline-company">Oslo Business Forum</div>
+              <div class="t-role">Customer Experience Ambassador</div>
+              <div class="t-company">Oslo Business Forum</div>
             </div>
-            <span class="timeline-period">Aug – Sep 2023</span>
+            <span class="t-period">Aug – Sep 2023</span>
           </div>
-          <ul class="timeline-bullets">
-            <li>Helped build and run the event under the theme "Thriving in Chaos"</li>
-            <li>Provided top-tier customer service and experience to attendees</li>
+          <ul class="t-bullets">
+            <li>Helped build and run the event under theme "Thriving in Chaos"</li>
+            <li>Delivered top-tier attendee experience across a high-profile business conference</li>
           </ul>
         </div>
       </div>
@@ -562,70 +674,71 @@
 </section>
 
 <!-- SKILLS -->
-<section class="skills" id="skills">
+<section id="skills">
   <div class="section-inner">
-    <p class="section-label">Capabilities</p>
-    <h2 class="section-title" style="color:var(--white)">What I <span style="color:var(--green-light)">bring</span></h2>
+    <p class="sec-label">Capabilities</p>
+    <h2 class="sec-title">What I <em>bring</em></h2>
     <div class="skills-grid">
 
-      <div class="skill-category">
+      <div class="skill-cat" data-glow>
         <div class="skill-cat-title">Data & Analytics</div>
-        <div class="skill-item">
-          <div class="skill-name"><span>Power BI</span><span>90%</span></div>
-          <div class="skill-bar"><div class="skill-fill" data-width="90"></div></div>
+        <div class="skill-row">
+          <div class="skill-meta"><span class="skill-name-txt">Power BI</span><span class="skill-pct">90%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="90"></div></div>
         </div>
-        <div class="skill-item">
-          <div class="skill-name"><span>Microsoft Excel</span><span>95%</span></div>
-          <div class="skill-bar"><div class="skill-fill" data-width="95"></div></div>
+        <div class="skill-row">
+          <div class="skill-meta"><span class="skill-name-txt">Microsoft Excel</span><span class="skill-pct">95%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="95"></div></div>
         </div>
-        <div class="skill-item">
-          <div class="skill-name"><span>Data Cleaning & Structuring</span><span>88%</span></div>
-          <div class="skill-bar"><div class="skill-fill" data-width="88"></div></div>
+        <div class="skill-row">
+          <div class="skill-meta"><span class="skill-name-txt">Data Cleaning & Structuring</span><span class="skill-pct">88%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="88"></div></div>
         </div>
       </div>
 
-      <div class="skill-category">
+      <div class="skill-cat" data-glow>
         <div class="skill-cat-title">Programming</div>
-        <div class="skill-item">
-          <div class="skill-name"><span>R</span><span>80%</span></div>
-          <div class="skill-bar"><div class="skill-fill" data-width="80"></div></div>
+        <div class="skill-row">
+          <div class="skill-meta"><span class="skill-name-txt">R</span><span class="skill-pct">80%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="80"></div></div>
         </div>
-        <div class="skill-item">
-          <div class="skill-name"><span>Python</span><span>75%</span></div>
-          <div class="skill-bar"><div class="skill-fill" data-width="75"></div></div>
+        <div class="skill-row">
+          <div class="skill-meta"><span class="skill-name-txt">Python</span><span class="skill-pct">75%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="75"></div></div>
         </div>
-        <div class="skill-item">
-          <div class="skill-name"><span>Stata</span><span>72%</span></div>
-          <div class="skill-bar"><div class="skill-fill" data-width="72"></div></div>
-        </div>
-      </div>
-
-      <div class="skill-category">
-        <div class="skill-cat-title">Sustainability & Finance</div>
-        <div class="skill-item">
-          <div class="skill-name"><span>ESG Data Analysis</span><span>85%</span></div>
-          <div class="skill-bar"><div class="skill-fill" data-width="85"></div></div>
-        </div>
-        <div class="skill-item">
-          <div class="skill-name"><span>Sustainability Reporting</span><span>82%</span></div>
-          <div class="skill-bar"><div class="skill-fill" data-width="82"></div></div>
-        </div>
-        <div class="skill-item">
-          <div class="skill-name"><span>Scope 3 / PPWR Analysis</span><span>78%</span></div>
-          <div class="skill-bar"><div class="skill-fill" data-width="78"></div></div>
+        <div class="skill-row">
+          <div class="skill-meta"><span class="skill-name-txt">Stata</span><span class="skill-pct">72%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="72"></div></div>
         </div>
       </div>
 
-      <div class="skill-category">
-        <div class="skill-cat-title">Soft Skills & Leadership</div>
-        <div class="skill-tags">
-          <span class="tag">Stakeholder Communication</span>
+      <div class="skill-cat" data-glow>
+        <div class="skill-cat-title">ESG & Sustainability</div>
+        <div class="skill-row">
+          <div class="skill-meta"><span class="skill-name-txt">ESG Data Analysis</span><span class="skill-pct">85%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="85"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span class="skill-name-txt">Sustainability Reporting</span><span class="skill-pct">82%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="82"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-meta"><span class="skill-name-txt">Scope 3 / PPWR Analysis</span><span class="skill-pct">78%</span></div>
+          <div class="skill-track"><div class="skill-fill" data-w="78"></div></div>
+        </div>
+      </div>
+
+      <div class="skill-cat" data-glow>
+        <div class="skill-cat-title">Leadership & Communication</div>
+        <div class="tag-cloud">
+          <span class="tag">Stakeholder Comms</span>
           <span class="tag">Event Management</span>
           <span class="tag">Budget Management</span>
           <span class="tag">Process Improvement</span>
           <span class="tag">Cross-cultural Teams</span>
           <span class="tag">Ownership Mindset</span>
           <span class="tag">Client Relations</span>
+          <span class="tag">M&E Frameworks</span>
           <span class="tag">Ambiguity Tolerance</span>
         </div>
       </div>
@@ -635,166 +748,415 @@
 </section>
 
 <!-- EDUCATION -->
-<section class="education" id="education">
+<section id="education">
   <div class="section-inner">
-    <p class="section-label">Academic Background</p>
-    <h2 class="section-title">My <span>education</span></h2>
+    <p class="sec-label">Academic Background</p>
+    <h2 class="sec-title">My <em>education</em></h2>
     <div class="edu-grid">
-      <div class="edu-card">
-        <div class="edu-degree">MSc Sustainable Finance</div>
+      <div class="edu-card" data-glow>
+        <div class="edu-deg">MSc Sustainable Finance</div>
         <div class="edu-school">BI Norwegian Business School</div>
         <div class="edu-year">2024 – 2026 · Oslo, Norway</div>
-        <p style="margin-top:1rem; font-size:0.88rem; color:#6b7280; line-height:1.6;">
-          Thesis on renewable energy and data-driven decision making. Focus on ESG integration,
-          sustainable investment, and quantitative finance.
-        </p>
+        <div class="edu-desc">Thesis on renewable energy and data-driven decisions. Focus: ESG integration, sustainable investment, quantitative finance.</div>
       </div>
-      <div class="edu-card">
-        <div class="edu-degree">Bachelor in Business Administration</div>
+      <div class="edu-card" data-glow>
+        <div class="edu-deg">Bachelor in Business Administration</div>
         <div class="edu-school">BI Norwegian Business School</div>
         <div class="edu-year">2021 – 2024 · Oslo, Norway</div>
-        <p style="margin-top:1rem; font-size:0.88rem; color:#6b7280; line-height:1.6;">
-          Broad foundation in business, finance, and management. Active in student organizations
-          throughout — VP, Financial Officer, Event Coordinator.
-        </p>
+        <div class="edu-desc">Active throughout as VP, Financial Officer, and Event Coordinator — leadership in practice, not just theory.</div>
       </div>
-      <div class="edu-card">
-        <div class="edu-degree">GCMS Forex Trading Diploma</div>
+      <div class="edu-card" data-glow>
+        <div class="edu-deg">GCMS Forex Trading Diploma</div>
         <div class="edu-school">Global Capital Market Solutions</div>
         <div class="edu-year">2021 · Oslo, Norway</div>
       </div>
-      <div class="edu-card">
-        <div class="edu-degree">IB Diploma (High School)</div>
+      <div class="edu-card" data-glow>
+        <div class="edu-deg">IB Diploma — High School</div>
         <div class="edu-school">Skagerak International School</div>
         <div class="edu-year">2018 – 2021 · Sandefjord, Norway</div>
-        <p style="margin-top:1rem; font-size:0.88rem; color:#6b7280; line-height:1.6;">
-          International Baccalaureate — built global perspective and academic rigour early on.
-        </p>
+        <div class="edu-desc">International Baccalaureate — built global perspective and analytical rigour from day one.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- VOLUNTEERING -->
-<section class="volunteering" id="volunteering">
+<!-- BEYOND WORK -->
+<section id="beyond">
   <div class="section-inner">
-    <p class="section-label">Heart & Community</p>
-    <h2 class="section-title">Beyond <span>work</span></h2>
+    <p class="sec-label">Heart & Community</p>
+    <h2 class="sec-title">Beyond <em>work</em></h2>
     <div class="vol-grid">
-      <div class="vol-card">
-        <div class="vol-icon">🌶️</div>
+      <div class="vol-card" data-glow>
+        <span class="vol-icon">🌶️</span>
         <div class="vol-title">Art of Spices</div>
         <div class="vol-org">Community Initiative · 2019–2021</div>
         <div class="vol-desc">Led a charity cooking group — we cooked, learned, and ate together, donating all profits to Care4 charity.</div>
       </div>
-      <div class="vol-card">
-        <div class="vol-icon">❤️</div>
+      <div class="vol-card" data-glow>
+        <span class="vol-icon">❤️</span>
         <div class="vol-title">Best Buddies</div>
         <div class="vol-org">Voluntary · 2020–2021</div>
-        <div class="vol-desc">Part of a voluntary group babysitting children with special needs, building patience, empathy, and trust.</div>
+        <div class="vol-desc">Part of a voluntary group babysitting children with special needs — empathy, patience, trust.</div>
       </div>
-      <div class="vol-card">
-        <div class="vol-icon">🎮</div>
+      <div class="vol-card" data-glow>
+        <span class="vol-icon">🎮</span>
         <div class="vol-title">SFO Children Helper</div>
         <div class="vol-org">Voluntary · 2019–2021</div>
-        <div class="vol-desc">Helped and played with children after school — because showing up for the small moments matters.</div>
+        <div class="vol-desc">Helped and played with children after school — because the small moments matter.</div>
       </div>
-      <div class="vol-card">
-        <div class="vol-icon">🍔</div>
+      <div class="vol-card" data-glow>
+        <span class="vol-icon">🍔</span>
         <div class="vol-title">Cashier & Chef</div>
         <div class="vol-org">Bastard Burgers · 2022–2026</div>
-        <div class="vol-desc">Four years in a fast-paced restaurant — kept customer satisfaction high and stayed grounded in everyday work.</div>
+        <div class="vol-desc">Four years in a fast-paced restaurant — stayed grounded, kept standards high, served people well.</div>
       </div>
     </div>
-
-    <div style="margin-top: 3rem;">
-      <p class="section-label">Languages</p>
-      <div class="languages-row">
-        <div class="lang-pill">
-          <span style="font-size:1.4rem">🇳🇴</span>
-          <div><div class="lang-name">Norwegian</div><div class="lang-level">Fluent</div></div>
-        </div>
-        <div class="lang-pill">
-          <span style="font-size:1.4rem">🇬🇧</span>
-          <div><div class="lang-name">English</div><div class="lang-level">Highly Proficient</div></div>
-        </div>
-        <div class="lang-pill">
-          <span style="font-size:1.4rem">🇮🇳</span>
-          <div><div class="lang-name">Hindi</div><div class="lang-level">Native</div></div>
-        </div>
-      </div>
+    <div class="lang-row">
+      <div class="lang-pill"><span class="lang-flag">🇳🇴</span><div><div class="lang-name">Norwegian</div><div class="lang-level">Fluent</div></div></div>
+      <div class="lang-pill"><span class="lang-flag">🇬🇧</span><div><div class="lang-name">English</div><div class="lang-level">Highly Proficient</div></div></div>
+      <div class="lang-pill"><span class="lang-flag">🇮🇳</span><div><div class="lang-name">Hindi</div><div class="lang-level">Native</div></div></div>
     </div>
   </div>
 </section>
 
 <!-- CONTACT -->
-<section class="contact" id="contact">
+<section id="contact">
   <div class="section-inner">
-    <p class="section-label">Let's Connect</p>
-    <h2 class="section-title">Get in <span>touch</span></h2>
-    <p class="contact-subtitle">
-      Whether you're working on sustainability, data, or something at the intersection —
-      I'd love to hear from you.
-    </p>
+    <p class="sec-label">Let's Connect</p>
+    <h2 class="sec-title">Get in <em>touch</em></h2>
+    <p class="contact-sub">Working on sustainability, data, or something at their intersection? I'd love to hear from you.</p>
     <div class="contact-links">
       <a href="mailto:dardarohit9740@gmail.com" class="contact-link">
         <span class="contact-link-icon">✉️</span>
-        dardarohit9740@gmail.com
+        <span class="contact-link-text">dardarohit9740@gmail.com</span>
       </a>
       <a href="tel:+4746715199" class="contact-link">
         <span class="contact-link-icon">📞</span>
-        +47 467 15 199
+        <span class="contact-link-text">+47 467 15 199</span>
       </a>
       <a href="https://www.linkedin.com/in/rohit-darda-4637501b0/" target="_blank" class="contact-link">
         <span class="contact-link-icon">💼</span>
-        LinkedIn Profile
+        <span class="contact-link-text">LinkedIn</span>
       </a>
     </div>
   </div>
 </section>
 
-<footer>
-  <p>© 2026 Rohit Vijay Darda · Oslo, Norway</p>
-</footer>
+<footer>© 2026 Rohit Vijay Darda · Oslo, Norway</footer>
 
 <script>
-  // Intersection Observer for timeline items
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+// ═══════════════════════════════════════════════════════
+// 1. CYBERNETIC GRID SHADER BACKGROUND (from 21dev)
+// ═══════════════════════════════════════════════════════
+function initShader() {
+  if (typeof THREE === 'undefined') return;
+  const container = document.getElementById('shader-bg');
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  container.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const clock = new THREE.Clock();
+
+  const vert = `void main() { gl_Position = vec4(position, 1.0); }`;
+
+  const frag = `
+    precision highp float;
+    uniform vec2 iResolution;
+    uniform float iTime;
+    uniform vec2 iMouse;
+
+    float random(vec2 st) {
+      return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+    }
+
+    void main() {
+      vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution.xy) / iResolution.y;
+      vec2 mouse = (iMouse - 0.5 * iResolution.xy) / iResolution.y;
+
+      float t = iTime * 0.15;
+      float mouseDist = length(uv - mouse);
+
+      float warp = sin(mouseDist * 20.0 - t * 4.0) * 0.08;
+      warp *= smoothstep(0.5, 0.0, mouseDist);
+      uv += warp;
+
+      vec2 gridUv = abs(fract(uv * 12.0) - 0.5);
+      float line = pow(1.0 - min(gridUv.x, gridUv.y), 55.0);
+
+      vec3 gridColor = vec3(0.02, 0.28, 0.12);
+      vec3 color = gridColor * line * (0.6 + sin(t * 2.0) * 0.25);
+
+      float energy = sin(uv.x * 20.0 + t * 5.0) * sin(uv.y * 20.0 + t * 3.0);
+      energy = smoothstep(0.85, 1.0, energy);
+      color += vec3(0.0, 1.0, 0.45) * energy * line * 0.8;
+
+      float glow = smoothstep(0.18, 0.0, mouseDist);
+      color += vec3(0.1, 1.0, 0.5) * glow * 0.35;
+
+      color += random(uv + t * 0.1) * 0.015;
+
+      gl_FragColor = vec4(color, 0.85);
+    }
+  `;
+
+  const uniforms = {
+    iTime: { value: 0 },
+    iResolution: { value: new THREE.Vector2() },
+    iMouse: { value: new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2) }
+  };
+
+  const mat = new THREE.ShaderMaterial({ vertexShader: vert, fragmentShader: frag, uniforms, transparent: true });
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+
+  function onResize() {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    uniforms.iResolution.value.set(window.innerWidth, window.innerHeight);
+  }
+  window.addEventListener('resize', onResize);
+  onResize();
+
+  window.addEventListener('mousemove', e => {
+    uniforms.iMouse.value.set(e.clientX, window.innerHeight - e.clientY);
+  });
+
+  renderer.setAnimationLoop(() => {
+    uniforms.iTime.value = clock.getElapsedTime();
+    renderer.render(scene, camera);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// 2. PARTICLE TEXT EFFECT (from 21dev — adapted to vanilla JS)
+// ═══════════════════════════════════════════════════════
+function initParticleText() {
+  const canvas = document.getElementById('particle-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  const WORDS = ['ROHIT', 'DATA', 'ESG', 'OSLO', 'IMPACT', 'FINANCE'];
+  const pixelSteps = 5;
+  const particles = [];
+  let wordIndex = 0;
+  let frameCount = 0;
+
+  class Particle {
+    constructor() {
+      this.pos = { x: 0, y: 0 };
+      this.vel = { x: 0, y: 0 };
+      this.acc = { x: 0, y: 0 };
+      this.target = { x: 0, y: 0 };
+      this.closeEnoughTarget = 80;
+      this.maxSpeed = 1.0;
+      this.maxForce = 0.1;
+      this.isKilled = false;
+      this.startColor = { r: 0, g: 0, b: 0 };
+      this.targetColor = { r: 0, g: 0, b: 0 };
+      this.colorWeight = 0;
+      this.colorBlendRate = 0.01;
+    }
+
+    move() {
+      const dx = this.pos.x - this.target.x;
+      const dy = this.pos.y - this.target.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const proximityMult = dist < this.closeEnoughTarget ? dist / this.closeEnoughTarget : 1;
+
+      const mag = Math.sqrt(
+        (this.target.x - this.pos.x) ** 2 + (this.target.y - this.pos.y) ** 2
+      ) || 1;
+      const desired = {
+        x: ((this.target.x - this.pos.x) / mag) * this.maxSpeed * proximityMult,
+        y: ((this.target.y - this.pos.y) / mag) * this.maxSpeed * proximityMult
+      };
+      const steer = { x: desired.x - this.vel.x, y: desired.y - this.vel.y };
+      const steerMag = Math.sqrt(steer.x ** 2 + steer.y ** 2) || 1;
+      this.acc.x += (steer.x / steerMag) * this.maxForce;
+      this.acc.y += (steer.y / steerMag) * this.maxForce;
+
+      this.vel.x += this.acc.x; this.vel.y += this.acc.y;
+      this.pos.x += this.vel.x; this.pos.y += this.vel.y;
+      this.acc.x = 0; this.acc.y = 0;
+    }
+
+    draw() {
+      if (this.colorWeight < 1.0) this.colorWeight = Math.min(this.colorWeight + this.colorBlendRate, 1.0);
+      const r = Math.round(this.startColor.r + (this.targetColor.r - this.startColor.r) * this.colorWeight);
+      const g = Math.round(this.startColor.g + (this.targetColor.g - this.startColor.g) * this.colorWeight);
+      const b = Math.round(this.startColor.b + (this.targetColor.b - this.startColor.b) * this.colorWeight);
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(this.pos.x, this.pos.y, 2, 2);
+    }
+
+    kill() {
+      if (!this.isKilled) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = (canvas.width + canvas.height) / 2;
+        this.target.x = canvas.width / 2 + Math.cos(angle) * dist;
+        this.target.y = canvas.height / 2 + Math.sin(angle) * dist;
+        this.startColor = {
+          r: this.startColor.r + (this.targetColor.r - this.startColor.r) * this.colorWeight,
+          g: this.startColor.g + (this.targetColor.g - this.startColor.g) * this.colorWeight,
+          b: this.startColor.b + (this.targetColor.b - this.startColor.b) * this.colorWeight
+        };
+        this.targetColor = { r: 0, g: 255, b: 100 };
+        this.colorWeight = 0;
+        this.isKilled = true;
       }
+    }
+  }
+
+  function randomPos() {
+    const angle = Math.random() * Math.PI * 2;
+    const dist = (canvas.width + canvas.height) / 2;
+    return {
+      x: canvas.width / 2 + Math.cos(angle) * dist,
+      y: canvas.height / 2 + Math.sin(angle) * dist
+    };
+  }
+
+  function nextWord(word) {
+    const off = document.createElement('canvas');
+    off.width = canvas.width; off.height = canvas.height;
+    const offCtx = off.getContext('2d');
+    offCtx.fillStyle = 'white';
+    const fontSize = Math.min(canvas.width / word.length * 1.4, canvas.height * 0.6);
+    offCtx.font = `bold ${fontSize}px Arial`;
+    offCtx.textAlign = 'center'; offCtx.textBaseline = 'middle';
+    offCtx.fillText(word, canvas.width / 2, canvas.height / 2);
+
+    const imgData = offCtx.getImageData(0, 0, canvas.width, canvas.height).data;
+    // Green palette
+    const hue = Math.random() * 60 + 100; // 100-160 = green range
+    const newColor = {
+      r: Math.round(Math.random() * 80),
+      g: Math.round(180 + Math.random() * 75),
+      b: Math.round(Math.random() * 120 + 60)
+    };
+
+    const coords = [];
+    for (let i = 0; i < imgData.length; i += pixelSteps * 4) {
+      if (imgData[i + 3] > 0) coords.push(i);
+    }
+    // Shuffle
+    for (let i = coords.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [coords[i], coords[j]] = [coords[j], coords[i]];
+    }
+
+    let pIdx = 0;
+    for (const ci of coords) {
+      const x = (ci / 4) % canvas.width;
+      const y = Math.floor(ci / 4 / canvas.width);
+      let p;
+      if (pIdx < particles.length) {
+        p = particles[pIdx]; p.isKilled = false; pIdx++;
+      } else {
+        p = new Particle();
+        const rp = randomPos(); p.pos.x = rp.x; p.pos.y = rp.y;
+        p.maxSpeed = Math.random() * 6 + 4;
+        p.maxForce = p.maxSpeed * 0.05;
+        p.colorBlendRate = Math.random() * 0.025 + 0.003;
+        particles.push(p);
+      }
+      p.startColor = {
+        r: p.startColor.r + (p.targetColor.r - p.startColor.r) * p.colorWeight,
+        g: p.startColor.g + (p.targetColor.g - p.startColor.g) * p.colorWeight,
+        b: p.startColor.b + (p.targetColor.b - p.startColor.b) * p.colorWeight
+      };
+      p.targetColor = newColor;
+      p.colorWeight = 0;
+      p.target.x = x; p.target.y = y;
+    }
+    for (let i = pIdx; i < particles.length; i++) particles[i].kill();
+  }
+
+  nextWord(WORDS[0]);
+
+  function animate() {
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      particles[i].move();
+      particles[i].draw();
+      if (particles[i].isKilled) {
+        const p = particles[i];
+        if (p.pos.x < -50 || p.pos.x > canvas.width + 50 || p.pos.y < -50 || p.pos.y > canvas.height + 50) {
+          particles.splice(i, 1);
+        }
+      }
+    }
+
+    frameCount++;
+    if (frameCount % 200 === 0) {
+      wordIndex = (wordIndex + 1) % WORDS.length;
+      nextWord(WORDS[wordIndex]);
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+// ═══════════════════════════════════════════════════════
+// 3. GLOW CARDS (from 21dev — CSS custom props + pointermove)
+// ═══════════════════════════════════════════════════════
+function initGlowCards() {
+  document.addEventListener('pointermove', e => {
+    document.querySelectorAll('[data-glow]').forEach(el => {
+      el.style.setProperty('--x', e.clientX);
+      el.style.setProperty('--xp', (e.clientX / window.innerWidth).toFixed(2));
+      el.style.setProperty('--y', e.clientY);
+      el.style.setProperty('--yp', (e.clientY / window.innerHeight).toFixed(2));
     });
-  }, { threshold: 0.15 });
+  });
+}
 
-  document.querySelectorAll('.timeline-item').forEach(item => observer.observe(item));
+// ═══════════════════════════════════════════════════════
+// 4. SCROLL ANIMATIONS
+// ═══════════════════════════════════════════════════════
+function initScrollEffects() {
+  // Timeline items fade in
+  const tObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.t-item').forEach(el => tObserver.observe(el));
 
-  // Skill bar animation
-  const skillObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.querySelectorAll('.skill-fill').forEach(bar => {
-          bar.style.width = bar.dataset.width + '%';
+  // Skill bars animate
+  const sObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.skill-fill').forEach(bar => {
+          bar.style.width = bar.dataset.w + '%';
         });
       }
     });
-  }, { threshold: 0.3 });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.skills-grid').forEach(el => sObserver.observe(el));
 
-  document.querySelectorAll('.skills-grid').forEach(el => skillObserver.observe(el));
-
-  // Smooth nav highlight
+  // Active nav link
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-links a');
   window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(sec => {
-      if (window.scrollY >= sec.offsetTop - 100) current = sec.id;
-    });
-    navLinks.forEach(link => {
-      link.style.color = link.getAttribute('href') === '#' + current
-        ? 'var(--green-light)' : 'rgba(255,255,255,0.7)';
+    let cur = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
     });
   });
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  initShader();
+  initParticleText();
+  initGlowCards();
+  initScrollEffects();
+});
 </script>
 </body>
 </html>
